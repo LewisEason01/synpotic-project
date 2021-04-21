@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="800.0" style="-fx-border-color: black; -fx-border-width: 5;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="StockAvailabilityController">
+    <children>
+        <AnchorPane prefHeight="700.0" prefWidth="800.0" style="-fx-background-color: white; -fx-border-color: black; -fx-border-width: 5;">
+            <children>
+                <HBox alignment="CENTER" layoutX="5.0" layoutY="7.0" prefHeight="95.0" prefWidth="600.0" style="-fx-background-color: blue;" AnchorPane.bottomAnchor="625.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <children>
+                        <Label alignment="CENTER" prefHeight="65.0" prefWidth="227.0" text="Stock Availability" textFill="WHITE">
+                            <font>
+                                <Font name="Arial Bold" size="22.0" />
+                            </font>
+                        </Label>
+                  <Button fx:id="logout" mnemonicParsing="false" onAction="#logoutOfApplication" text="Logout" />
+                    </children></HBox>
+            <Label fx:id="stockLabel" layoutX="44.0" layoutY="248.0" prefHeight="76.0" prefWidth="486.0">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Button fx:id="checkStock" alignment="CENTER" layoutX="202.0" layoutY="190.0" mnemonicParsing="false" onAction="#viewStock" prefHeight="44.0" prefWidth="135.0" style="-fx-background-color: blue;" text="Check stock" textFill="WHITE" />
+            <Button fx:id="clearStockInfo" layoutX="119.0" layoutY="190.0" mnemonicParsing="false" onAction="#clearStockInputs" prefHeight="44.0" prefWidth="74.0" text="Clear" />
+            <TableView fx:id="tableView" layoutX="16.0" layoutY="345.0" prefHeight="275.0" prefWidth="768.0">
+              <columns>
+                <TableColumn fx:id="storeCodeColumn" prefWidth="105.59998893737793" text="Store code" />
+                <TableColumn fx:id="storeNameColumn" minWidth="0.0" prefWidth="198.20000457763672" text="Store name" />
+                  <TableColumn fx:id="productCodeColumn" minWidth="0.0" prefWidth="148.5999755859375" text="Product code" />
+                  <TableColumn fx:id="productDescriptionColumn" minWidth="0.0" prefWidth="239.39999389648438" text="Product description" />
+                  <TableColumn fx:id="quantityColumn" minWidth="0.0" prefWidth="83.5999755859375" text="Qnty" />
+              </columns>
+            </TableView>
+            <ComboBox fx:id="storeName" editable="true" layoutX="119.0" layoutY="114.0" prefHeight="26.0" prefWidth="227.0" promptText="None" style="-fx-border-color: black;" />
+                  <TextField fx:id="storeCode" layoutX="119.0" layoutY="154.0" prefHeight="27.0" prefWidth="74.0" style="-fx-border-color: black;" />
+            <ComboBox fx:id="productDescription" editable="true" layoutX="516.0" layoutY="114.0" prefHeight="26.0" prefWidth="227.0" promptText="None" style="-fx-border-color: black;" />
+            <TextField fx:id="productCode" layoutX="516.0" layoutY="154.0" prefHeight="27.0" prefWidth="113.0" style="-fx-border-color: black;" />
+                  <Label fx:id="recipientNameLbl" alignment="CENTER" layoutX="10.0" layoutY="118.0" prefHeight="18.0" prefWidth="124.0" text="Store name" />
+                  <Label fx:id="pwdLbl" alignment="CENTER" layoutX="10.0" layoutY="159.0" prefHeight="18.0" prefWidth="123.0" text="Store code" />
+            <Label alignment="CENTER" layoutX="391.0" layoutY="114.0" prefHeight="27.0" prefWidth="125.0" text="Product description">
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </Label>
+            <Label alignment="CENTER" layoutX="392.0" layoutY="154.0" prefHeight="28.0" prefWidth="124.0" text="Product code" />
+            <Label fx:id="totalLabel" layoutX="688.0" layoutY="636.0" prefHeight="20.0" prefWidth="95.0" text="Total is 0">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            </children></AnchorPane>
+    </children>
+</Pane>
