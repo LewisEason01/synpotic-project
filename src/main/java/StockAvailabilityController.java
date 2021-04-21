@@ -205,8 +205,8 @@ public class StockAvailabilityController implements Initializable {
         productCode.clear();
         productDescription.setValue(null);
         storeName.setValue(null);
-        populateStoreNames();
-        populateProducts();
+//        populateStoreNames();
+//        populateProducts();
     }
 
     public void logoutOfApplication(ActionEvent event) throws Exception {
