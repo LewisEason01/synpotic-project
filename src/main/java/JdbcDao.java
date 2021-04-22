@@ -17,7 +17,7 @@ public class JdbcDao {
             "locations.store_code = stock.store_code";
     private static final String PRODUCT_DESCRIPTION_PRODUCT_CODE = "SELECT stock.product_code FROM stock, product\n" +
             "WHERE product_description = ? AND product.product_code = stock.product_code ";
-    private static final String SELECT_STORE_PRODUCT_QUANTITY = "SELECT quantity FROM stock\n" +
+    private static final String SELECT_ALL_CODES = "SELECT stock.store_code, stock.product_code FROM stock \n" +
             "WHERE stock.store_code = ? AND stock.product_code = ?";
     private static final String SELECT_EVERYTHING = "select stock.store_code, store_name, stock.product_code, product_description, quantity from stock, product, store_locations \n" +
             "where stock.product_code = product.product_code and stock.store_code = store_locations.store_code";
@@ -27,10 +27,8 @@ public class JdbcDao {
             "where stock.product_code = product.product_code and stock.store_code = store_locations.store_code and stock.store_code = ?";
     private static final String SELECT_PRODUCT_AT_ALL_STORES = "select stock.store_code, store_name, stock.product_code, product_description, quantity from stock, product, store_locations \n " +
             "where stock.product_code = product.product_code and stock.store_code = store_locations.store_code and stock.product_code = ?";
-    private static final String VALIDATE_STORE_CODE = "select stock.store_code from stock, store_locations \n" +
-            "where stock.store_code = store_locations.store_code and stock.store_code = ?";
-    private static final String VALIDATE_PRODUCT_CODE = "select product_code from product \n" +
-            "where product_code = ?";
+    private static final String VALIDATE_STORE_CODE = "select store_code from store_locations where store_code = ?";
+    private static final String VALIDATE_PRODUCT_CODE = "select product_code from product where product_code = ?";
 
     public ResultSet selectLoginCredentials(String username, String password) throws SQLException {
 
@@ -57,14 +55,13 @@ public class JdbcDao {
         return preparedStatement.executeQuery();
     }
 
-    public ResultSet selectStoreProductQuantity(String storeCodeChoice,
-                                                String productCodeChoice) throws SQLException {
+    public ResultSet validateCodes(String storeCodeChoice, String productCodeChoice) throws SQLException {
 
         // Checks if the username and password entered match the record in the table
         Connection connection = DriverManager
                 .getConnection(DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD);
 
-        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_STORE_PRODUCT_QUANTITY);
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_CODES);
         preparedStatement.setString(1, storeCodeChoice);
         preparedStatement.setString(2, productCodeChoice);
 

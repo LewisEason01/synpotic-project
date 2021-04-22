@@ -248,10 +248,6 @@ public class StockAvailabilityController implements Initializable {
         return obList;
     }
 
-    public boolean validateCodes(ResultSet rs) throws SQLException {
-        return !rs.next();
-    }
-
     public void viewStock(ActionEvent event) {
         tableView.getItems().clear();
         // Sends the data to be displayed on the preview
@@ -279,16 +275,19 @@ public class StockAvailabilityController implements Initializable {
         try {
             if (storeCode.getText().isEmpty() && productCode.getText().isEmpty()) {
                 tableView.setItems(populateRecords(jdbcDao.selectEverything()));
-            } else if (!storeCode.getText().isEmpty() && !productCode.getText().isEmpty()) {
+            } else if (!storeCode.getText().isEmpty() && !productCode.getText().isEmpty() &&
+                    jdbcDao.validateCodes(storeCode.getText(), productCode.getText()).next()) {
                 tableView.setItems(populateRecords(jdbcDao.selectStoreProduct(storeCode.getText(), productCode.getText())));
-            } else if (!storeCode.getText().isEmpty() && productCode.getText().isEmpty()) {
+            } else if (!storeCode.getText().isEmpty() && productCode.getText().isEmpty() &&
+                    jdbcDao.validateStoreCode(storeCode.getText()).next()) {
                 tableView.setItems(populateRecords(jdbcDao.retrieveStoreProducts(storeCode.getText())));
-            } else if (storeCode.getText().isEmpty() && !productCode.getText().isEmpty()) {
+            } else if (storeCode.getText().isEmpty() && !productCode.getText().isEmpty() &&
+                    jdbcDao.validateProductCode(productCode.getText()).next()) {
                 tableView.setItems(populateRecords(jdbcDao.retrieveProductAtAllStores(productCode.getText())));
             } else if (!jdbcDao.validateStoreCode(storeCode.getText()).next()){
                 System.out.println("Hello");
                 alert.errorAlertBoxes(invalidStoreCode);
-            } else if (validateCodes(jdbcDao.validateProductCode(productCode.getText()))) {
+            } else if (!jdbcDao.validateProductCode(productCode.getText()).next()) {
                 alert.errorAlertBoxes(invalidProductCode);
             }
         } catch (SQLException e) {
