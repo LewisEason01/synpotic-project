@@ -1,3 +1,4 @@
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,36 +18,47 @@ import org.controlsfx.control.textfield.TextFields;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class StockAvailabilityController implements Initializable {
 
-    @FXML TextField productCode, storeCode;
-    @FXML Button checkStock, logout, clearStockInfo;
-    @FXML ComboBox<String> productDescription = new ComboBox<>();
-    @FXML ComboBox<String> storeName = new ComboBox<>();
-    @FXML Label stockLabel, totalLabel;
+    @FXML
+    TextField productCode, storeCode;
+    @FXML
+    Button checkStock, logout, clearStockInfo;
+    @FXML
+    ComboBox<String> productDescription = new ComboBox<>();
+    @FXML
+    ComboBox<String> storeName = new ComboBox<>();
+    @FXML
+    Label stockLabel, totalLabel;
 
-    @FXML private TableView<StockInformation> tableView;
-    @FXML private TableColumn<StockInformation, String> storeNameColumn;
-    @FXML private TableColumn<StockInformation, String> storeCodeColumn;
-    @FXML private TableColumn<StockInformation, String> productDescriptionColumn;
-    @FXML private TableColumn<StockInformation, String> productCodeColumn;
-    @FXML private TableColumn<StockInformation, Integer> quantityColumn;
+    @FXML
+    private TableView<StockInformation> tableView;
+    @FXML
+    private TableColumn<StockInformation, String> storeNameColumn;
+    @FXML
+    private TableColumn<StockInformation, String> storeCodeColumn;
+    @FXML
+    private TableColumn<StockInformation, String> productDescriptionColumn;
+    @FXML
+    private TableColumn<StockInformation, String> productCodeColumn;
+    @FXML
+    private TableColumn<StockInformation, Integer> quantityColumn;
 
 
     StockSearchResults stockSearchResults = new StockSearchResults();
     AlertBoxes alert = new AlertBoxes();
+    JdbcDao jdbcDao = new JdbcDao();
+    ObservableList<StockInformation> obList = FXCollections.observableArrayList();
 
 
     @Override
-    public void initialize(URL location, ResourceBundle resourceBundle)  {
-        productDescriptionColumn.setCellValueFactory(new PropertyValueFactory<>("productDescription"));
-        productDescriptionColumn.getStyleClass().add("rightAlignedTableColumnHeader");
-        productCodeColumn.setCellValueFactory(new PropertyValueFactory<>("productCode"));
-        storeNameColumn.setCellValueFactory(new PropertyValueFactory<>("storeName"));
+    public void initialize(URL location, ResourceBundle resourceBundle) {
         storeCodeColumn.setCellValueFactory(new PropertyValueFactory<>("storeCode"));
+        storeNameColumn.setCellValueFactory(new PropertyValueFactory<>("storeName"));
+        productCodeColumn.setCellValueFactory(new PropertyValueFactory<>("productCode"));
+        productDescriptionColumn.setCellValueFactory(new PropertyValueFactory<>("productDescription"));
         quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         populateStoreNames();
         populateProducts();
@@ -100,12 +112,12 @@ public class StockAvailabilityController implements Initializable {
         });
     }
 
-        public void populateStoreCode() {
-            ObservableList<StockInformation> getStoreCodes =
-                    stockSearchResults.getStoreCodeForStoreName(storeName.getValue());
-            for(StockInformation storeCodes : getStoreCodes){
-                storeCode.setText(storeCodes.getStoreCode());
-            }
+    public void populateStoreCode() {
+        ObservableList<StockInformation> getStoreCodes =
+                stockSearchResults.getStoreCodeForStoreName(storeName.getValue());
+        for (StockInformation storeCodes : getStoreCodes) {
+            storeCode.setText(storeCodes.getStoreCode());
+        }
 //        try {
 //            String storeNameValue = storeName.getValue();
 //            ResultSet resultSet = jdbcDao.selectStoreCode(storeNameValue);
@@ -165,7 +177,7 @@ public class StockAvailabilityController implements Initializable {
 
     public void populateProducts() {
 
-        for(String productDescriptions : stockSearchResults.getProductDescriptions()){
+        for (String productDescriptions : stockSearchResults.getProductDescriptions()) {
             productDescription.getItems().addAll(productDescriptions);
         }
         TextFields.bindAutoCompletion(productDescription.getEditor(), productDescription.getItems());
@@ -183,7 +195,7 @@ public class StockAvailabilityController implements Initializable {
 
     public void populateStoreNames() {
 
-        for(String storeNames : stockSearchResults.getStoreNames()){
+        for (String storeNames : stockSearchResults.getStoreNames()) {
             storeName.getItems().addAll(storeNames);
         }
         TextFields.bindAutoCompletion(storeName.getEditor(), storeName.getItems());
@@ -224,7 +236,24 @@ public class StockAvailabilityController implements Initializable {
         }
     }
 
+
+    public ObservableList<StockInformation> populateRecords(ResultSet rs) throws SQLException {
+        while (rs.next()) {
+            obList.add(new StockInformation(rs.getString("store_code"),
+                    rs.getString("store_name"),
+                    rs.getString("product_code"),
+                    rs.getString("product_description"),
+                    rs.getInt("quantity")));
+        }
+        return obList;
+    }
+
+    public boolean validateCodes(ResultSet rs) throws SQLException {
+        return !rs.next();
+    }
+
     public void viewStock(ActionEvent event) {
+        tableView.getItems().clear();
         // Sends the data to be displayed on the preview
         String invalidStoreCode = "The Store code is incorrect";
         String invalidProductCode = "The Product code is incorrect";
@@ -232,23 +261,39 @@ public class StockAvailabilityController implements Initializable {
         int total = tableView.getItems().stream().mapToInt(StockInformation::getQuantity).sum();
         totalLabel.setText("Total is " + total);
 
-        if (!allInfo.isEmpty() && stockSearchResults.validateCodes(storeCode.getText(), productCode.getText())) {
-            tableView.setItems(stockSearchResults.getOneProductFromOneStore(storeCode.getText(), productCode.getText()));
-        } else if (storeCode.getText().isEmpty() && !productCode.getText().isEmpty() && stockSearchResults.validateProductCode(productCode.getText())) {
-            tableView.setItems(stockSearchResults.getOneProductAcrossAllStores(productCode.getText()));
-        } else if (!storeCode.getText().isEmpty() && productCode.getText().isEmpty() && stockSearchResults.validateStoreCode(storeCode.getText())) {
-            tableView.setItems(stockSearchResults.getAllProductsFromOneStore(storeCode.getText()));
-        } else if (storeCode.getText().isEmpty() && productCode.getText().isEmpty()) {
-            tableView.setItems(stockSearchResults.allProduct());
-        } else if (!stockSearchResults.validateStoreCode(storeCode.getText())) {
-            tableView.getItems().clear();
-            alert.errorAlertBoxes(invalidStoreCode);
-        } else if (!stockSearchResults.validateProductCode(productCode.getText())) {
-            tableView.getItems().clear();
-            alert.errorAlertBoxes(invalidProductCode);
+//        if (!allInfo.isEmpty() && stockSearchResults.validateCodes(storeCode.getText(), productCode.getText())) {
+//            tableView.setItems(stockSearchResults.getOneProductFromOneStore(storeCode.getText(), productCode.getText()));
+//        } else if (storeCode.getText().isEmpty() && !productCode.getText().isEmpty() && stockSearchResults.validateProductCode(productCode.getText())) {
+//            tableView.setItems(stockSearchResults.getOneProductAcrossAllStores(productCode.getText()));
+//        } else if (!storeCode.getText().isEmpty() && productCode.getText().isEmpty() && stockSearchResults.validateStoreCode(storeCode.getText())) {
+//            tableView.setItems(stockSearchResults.getAllProductsFromOneStore(storeCode.getText()));
+//        } else if (storeCode.getText().isEmpty() && productCode.getText().isEmpty()) {
+//            tableView.setItems(stockSearchResults.allProduct());
+//        } else if (!stockSearchResults.validateStoreCode(storeCode.getText())) {
+//            tableView.getItems().clear();
+//            alert.errorAlertBoxes(invalidStoreCode);
+//        } else if (!stockSearchResults.validateProductCode(productCode.getText())) {
+//            tableView.getItems().clear();
+//            alert.errorAlertBoxes(invalidProductCode);
+//        }
+        try {
+            if (storeCode.getText().isEmpty() && productCode.getText().isEmpty()) {
+                tableView.setItems(populateRecords(jdbcDao.selectEverything()));
+            } else if (!storeCode.getText().isEmpty() && !productCode.getText().isEmpty()) {
+                tableView.setItems(populateRecords(jdbcDao.selectStoreProduct(storeCode.getText(), productCode.getText())));
+            } else if (!storeCode.getText().isEmpty() && productCode.getText().isEmpty()) {
+                tableView.setItems(populateRecords(jdbcDao.retrieveStoreProducts(storeCode.getText())));
+            } else if (storeCode.getText().isEmpty() && !productCode.getText().isEmpty()) {
+                tableView.setItems(populateRecords(jdbcDao.retrieveProductAtAllStores(productCode.getText())));
+            } else if (!jdbcDao.validateStoreCode(storeCode.getText()).next()){
+                System.out.println("Hello");
+                alert.errorAlertBoxes(invalidStoreCode);
+            } else if (validateCodes(jdbcDao.validateProductCode(productCode.getText()))) {
+                alert.errorAlertBoxes(invalidProductCode);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    }
-
 //        try {
 //            ResultSet productQuantity = jdbcDao.selectStoreProductQuantity(stockInformation.getStoreCode(),
 //                                                                            stockInformation.getproductCode());
@@ -262,3 +307,4 @@ public class StockAvailabilityController implements Initializable {
 //        }catch (SQLException e) {
 //        }
     }
+}

@@ -66,15 +66,15 @@ public class StockSearchResults {
 
     public ObservableList<StockInformation> allProduct() {
         List<StockInformation> stock = new ArrayList<>();
-        stock.add(new StockInformation("Kettle", "500101", "Plymouth", "101", 5));
-        stock.add(new StockInformation("Seat", "500102", "Plymouth", "101", 8));
-        stock.add(new StockInformation("Furniture", "500103", "Plymouth", "101", 9));
-        stock.add(new StockInformation("Kettle", "500101", "Exeter", "102", 7));
-        stock.add(new StockInformation("Seat", "500102", "Exeter", "102", 3));
-        stock.add(new StockInformation("Furniture", "500103", "Exeter", "102", 12));
-        stock.add(new StockInformation("Kettle", "500101", "Torquay", "103", 16));
-        stock.add(new StockInformation("Seat", "500102", "Torquay", "103", 4));
-        stock.add(new StockInformation("Furniture", "500103", "Torquay", "103", 2));
+        stock.add(new StockInformation("101", "Plymouth", "500101", "Kettle", 5));
+        stock.add(new StockInformation("101", "Plymouth", "500101", "Seat", 6));
+        stock.add(new StockInformation("101", "Plymouth", "500101", "Furniture", 14));
+        stock.add(new StockInformation("102", "Exeter", "500102", "Kettle", 23));
+        stock.add(new StockInformation("102", "Exeter", "500102", "Seat", 2));
+        stock.add(new StockInformation("102", "Exeter", "500102", "Furniture", 1));
+        stock.add(new StockInformation("103", "Torquay", "500103", "Kettle", 17));
+        stock.add(new StockInformation("103", "Torquay", "500103", "Seat", 9));
+        stock.add(new StockInformation("103", "Torquay", "500103", "Furniture", 8));
         return FXCollections.observableArrayList(stock);
     }
 

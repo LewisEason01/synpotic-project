@@ -5,7 +5,7 @@ public class StockInformation {
     private String storeCode;
     private Integer quantity;
 
-    public StockInformation(String productDescription, String productCode, String storeName, String storeCode, Integer quantity) {
+    public StockInformation(String storeCode, String storeName, String productCode, String productDescription, Integer quantity) {
         setProductDescription(productDescription);
         setProductCode(productCode);
         setStoreName(storeName);
@@ -13,20 +13,12 @@ public class StockInformation {
         setQuantity(quantity);
     }
 
-    public String getProductDescription() {
-        return productDescription;
+    public String getStoreCode() {
+        return storeCode;
     }
 
-    public void setProductDescription(String productDescription) {
-        this.productDescription = productDescription;
-    }
-
-    public String getProductCode() {
-        return productCode;
-    }
-
-    public void setProductCode(String productCode) {
-        this.productCode = productCode;
+    public void setStoreCode(String storeCode) {
+        this.storeCode = storeCode;
     }
 
     public String getStoreName() {
@@ -37,12 +29,20 @@ public class StockInformation {
         this.storeName = storeName;
     }
 
-    public String getStoreCode() {
-        return storeCode;
+    public String getProductCode() {
+        return productCode;
     }
 
-    public void setStoreCode(String storeCode) {
-        this.storeCode = storeCode;
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
+    }
+
+    public String getProductDescription() {
+        return productDescription;
+    }
+
+    public void setProductDescription(String productDescription) {
+        this.productDescription = productDescription;
     }
 
     public Integer getQuantity() {
