@@ -1,0 +1,11 @@
+Add the following VM Options to enable JavaFX Runtime and the auto-population of the drop-downs:
+    --module-path "/Users/Acer/IdeaProjects/javafx-sdk-11.0.2/lib" --add-modules javafx.controls,javafx.fxml --add-exports javafx.graphics/com.sun.javafx.sg.prism=ALL-UNNAMED --add-exports=javafx.base/com.sun.javafx.event=ALL-UNNAMED
+
+Add the JavaFx lib directory to the 'Library' section under 'Property Structure'
+
+Enable maven with the JavaFx application by
+       1) right clicking on the project folder
+       2) Choose 'Add Framework support' (2nd option)
+This generates the pom.xml file
+
+Add the maven dependencies to the pom.xml file.
